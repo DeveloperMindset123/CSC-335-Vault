@@ -51,3 +51,9 @@
 ; Last case of using null? --> this will throw an error --> what is the output of (null? l) where l is sphaghetti --> No answer because we cannot ask the null? of an atom.
 ; In practice, null? is false for all instance except an empty list, so only use this to check and verify if null? is empty or not
 ; The law of null? --> the primitive null? is defined only for lists.
+
+; just as there exists null? predicate, there also exists the atom? predicate --> example of using the atom? predicate is the following --> is (atom? s) true or false --> where s=Harry --> the output will be true --> and atom? is a predicate that either returns true or false, just as null? does.
+; Example where atom? would return false would be the following --> is (atom? l) true or false? where l = (harry had a heap of apples) --> notice that although l is an list consiting of atom (lat), this doesn't mean it's an atom --> therefore, atom? will return false since l is a list, not an atom
+; atom? takes in one argument --> and that argument can be any specific s-expression
+
+
