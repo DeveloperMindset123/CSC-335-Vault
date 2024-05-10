@@ -57,3 +57,7 @@
 ; atom? takes in one argument --> and that argument can be any specific s-expression
 
 
+; next predicate to cover is eq? --> predicate used to check if two s-expressions being passed in are the same non-numerical atom --> example (true) (eq? a1 a2) where a1=Harry, a2=Harry results in true --> example 2 (false) (eq? a1 a2), where a1=harry, a2=butter, results in false because they are two distinct atoms
+; eq? takes in two arguments. Both of them must be non-numeric atoms
+; in the case of eq, if we were to pass in 2 lists, or one atom and one list --> we wouldn't get any answer, nor if we pass in numerical values despite being atoms, since the restriction is that it must be non-numerical atom values
+; The law of eq? states the following --> The primitive eq? takes two arguments --> each must be a non-numeric atom
