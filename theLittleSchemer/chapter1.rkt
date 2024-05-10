@@ -25,3 +25,23 @@
 ; additional thing to note --> similar to car, we cannot take the cdr of an empty list either --> therefore, asking something like what is the (cdr l) where l is () will also result in an error
 
 ; The formal definition of cdr is the following --> the primitive cdr is defined only for non-empty lists. the cdr of any non-empty lists is always is always another list.
+
+; We can use things like car and cdr nested as well, for example, take a look at the followng snippet of questions:
+#|
+- Example 1 --> uses car and cdr together --> What is (car (cdr l)) where l is ((b) (x y) ((c))) --> Let's try and understand what's going on here:
+    - First, it's asking for the cdr, meaning (b) will be excluded the resulting output will be ((x y) ((c)))
+    - Next, taking the car of this mutated list will return (x y), since (x y) is the new "first" s-expression
+
+- Example 2 --> using cdr nested --> what is (cdr (cdr l)) where l is ((b) (x y) ((c))) --> again, we can break it down based on the behavior of the first and second cdr primitives:
+    0 First, the first cdr will return ((x y) ((c))), then the next cdr will return (((c)))
+
+- As a reminder, both car and cdr takes in non-empty lists as arguments
+|#
+
+; unlike car and cdr, which removes a certain s-expression, when it comes to prepending (adding to the beggining of an existing list), the primitive operator that is used is cons
+; Thus, if we were to be asked the following question --> what is the cons of an atom a and the existing list l where a = peanut and l = (butter and jelly)? --> written as (cons a l) --> the resultig output is (peanut butter and jelly) --> here, the atom peanut has been added to the beggining of the list 
+
+; understanding cons --> what does cons takes in as arguments --> cons takes two arguments --> the first is one is any s-expressions and the second one is any list
+; a trickier example using cons would be the following --> what is cons s l where s is (a b (c)) and l is ()? --> let's break it down, it meets the requirement, the first argument being passed in is an s-expression, which in this case is a list and the second argument being passed in is a list --> in this case it's an empty list --> and therefore the resulting output will be --> ((a b (c)))
+; if the second argument when using cons is an atom or both argument is an atom, cons will throw an error message instead
+; The law of cons states the following --> The primitive cons takes in two arguments --> The second argument of cons must be a list and it returns a mutated list as an output
