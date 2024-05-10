@@ -45,3 +45,9 @@
 ; a trickier example using cons would be the following --> what is cons s l where s is (a b (c)) and l is ()? --> let's break it down, it meets the requirement, the first argument being passed in is an s-expression, which in this case is a list and the second argument being passed in is a list --> in this case it's an empty list --> and therefore the resulting output will be --> ((a b (c)))
 ; if the second argument when using cons is an atom or both argument is an atom, cons will throw an error message instead
 ; The law of cons states the following --> The primitive cons takes in two arguments --> The second argument of cons must be a list and it returns a mutated list as an output
+
+; we can define list using the following scheme syntax --> what is (null? (quote ())) --> This is a null predicate checking whether the list being passed in is empty or not, if so return true, otherwise return false --> null outputs a boolean value --> (quote ()) is another method of initializing list in scheme
+; Another example of using the null? predicate --> what is the output of (null? l) || (null? (quote (a b c))) where l = (a b c) --> the output will be false since null expects the list it is expecting to be empty, in this case, list l is non empty
+; Last case of using null? --> this will throw an error --> what is the output of (null? l) where l is sphaghetti --> No answer because we cannot ask the null? of an atom.
+; In practice, null? is false for all instance except an empty list, so only use this to check and verify if null? is empty or not
+; The law of null? --> the primitive null? is defined only for lists.
