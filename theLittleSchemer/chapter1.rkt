@@ -1,11 +1,13 @@
 #lang racket
+#!/usr/bin/racket
+
 ; A list is a collection of s-expressions enclosed by parenthases
 ; below shows an example of an empty list, a special s-expression known as null (or empty) list, however note that an empty list is not an atom
 ; definition of an atom is the following --> atom is a string of characters (consisting of alphanumerical values)
-()
+;()
 
 ; A list consisiting of several empty lists is a list itself --> because () lists are considered s-expressions and a list is defined as a collection of s-expressions
-(() () () ())
+;(() () () ()) --> this line was causing error during compile time
 
 ; THe car operator returns the head element/s-expression within a list
 ; example --> the car of the list (a b c) would be a
@@ -61,3 +63,28 @@
 ; eq? takes in two arguments. Both of them must be non-numeric atoms
 ; in the case of eq, if we were to pass in 2 lists, or one atom and one list --> we wouldn't get any answer, nor if we pass in numerical values despite being atoms, since the restriction is that it must be non-numerical atom values
 ; The law of eq? states the following --> The primitive eq? takes two arguments --> each must be a non-numeric atom
+
+; The next predicate is lat? (predicate used to check whether or not the s-expression being passed in is a list of atom or not) --> (lat? l) where l is (Jack Sprat could eat no chicken fat) --> this output is true since l is a list of atoms.
+; Instance where lat? will return false is if the list contians s-expresions that are list (nested list) or empty lists
+; Following shows the function definition for lat? --> recurisve implementation
+(define lat?
+    (lambda (l)
+        (cond
+        ; conditionl statement to check if the annoymous function's argument, an s-expresion, is an empty list or not --> this is the termination case
+            ((null? l) #t)
+
+            ; Otherwise, check if the first element is an atom or not 
+            ((atom? (car l))
+            
+            ; Then, recursively continue to check if the list's remaining element --> which we can reduce using cdr is an atom or not
+            ((lat? (cdr l)))
+            (else #f)
+            )  
+        )
+    )
+)
+; we can run a test case to see what the resulting output will look like
+(lat? (quote (bacon egg and cheese)))
+
+; the member? predicate function is used to check is a certain s-expression is contained within an existing list of atoms
+; The first commandment --> always ask null? as the first question in expressing any funnctions
