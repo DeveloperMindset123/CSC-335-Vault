@@ -89,3 +89,7 @@
 ; the member? predicate function is used to check is a certain s-expression is contained within an existing list of atoms
 ; The first commandment --> always ask null? as the first question in expressing any funnctions
 ; Note : the member? predicate is used to check if an atom is present within a list of atoms
+
+; what is rembar --> scheme syntax pseudocode --> (rember a lat) --> (lamb chops and jelly) --> "Rember" stands for removing a member (treat member as an element within a list, a list of atoms to be specific) --> example uses : (rember a lat) where a = mint and lat = (lamb chops and mint flavored mint jelly) --> since there's two mint present, the first time mint appears will be removed from the list in this case and the resulting mutated list will be  --> (lamb chops and flavored mint jelly)
+
+; continue at page 33
