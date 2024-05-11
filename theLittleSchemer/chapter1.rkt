@@ -88,3 +88,4 @@
 
 ; the member? predicate function is used to check is a certain s-expression is contained within an existing list of atoms
 ; The first commandment --> always ask null? as the first question in expressing any funnctions
+; Note : the member? predicate is used to check if an atom is present within a list of atoms
