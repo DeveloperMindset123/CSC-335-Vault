@@ -92,4 +92,43 @@
 
 ; what is rembar --> scheme syntax pseudocode --> (rember a lat) --> (lamb chops and jelly) --> "Rember" stands for removing a member (treat member as an element within a list, a list of atoms to be specific) --> example uses : (rember a lat) where a = mint and lat = (lamb chops and mint flavored mint jelly) --> since there's two mint present, the first time mint appears will be removed from the list in this case and the resulting mutated list will be  --> (lamb chops and flavored mint jelly)
 
-; continue at page 33
+; function definition for rember (removing a member from a list): --> note that this predicate doesn't return a boolean value, rather it returns a mutated list (with the specified value being removed from the list)
+(define rember
+    (lambda (a lat)
+        (cond 
+        ; if the list of atoms passes the null operator check (meaning the list is empty as that is the only case that the null operator will return true) --> return an empty list in that case --> note that this also serves as the termination case to the recurison logic as well.
+            ((null? lat) (quote()))
+            (else (cond
+            ; otherwise, compare and check if the value a (the s-expression [atom] to be removed from the list) is equal to the first value in the list of atoms or not, if so, return the cdr (coulder), which will return everything but the first element, thus effectively removing the value, otherwise, recurisvely reduce the list until we arrive at the member
+                ((eq? (car lat) a) (cdr lat))
+                (else (rember a (cdr lat))))))))
+
+
+; the second commandment states --> use cons to build lists
+
+; The following shows a modified version of the rember algorithm  --> utilizing cons --> the syntax may not be entirely correct however
+(define rember
+    (lambda (a lat)
+        (cond 
+            ((null? lat) (quote ()))
+            (else (cond 
+            ; same logic as before, compare adn check if the current head element of the list matches the element we are attempting to remove, if so, return the current list's cdr, effectively removing the value we needed to remove (however, note that rember only removes the value we specify and keeps the rest of the lists intact, adn therefore, we will need to use the cons primitive to rebuild the list in the case that we need to remove an element in the middle or at the end of the list, we will need to remove and add back the elemenet that isn't supposed to be removed when recurively iterating through our list)
+                ((eq? (car lat) a) (cdr lat))
+                ; otherwise, take the first elemnet and prepend it to the beggining of the list
+                ; if the values don't match, extract the first element/atom, prepend it to the list, and simultaneously reduce the list, allowing for is to iterate through the list without unneccessary losing elements
+                (else (cons (car lat)
+                    (rember a (cdr lat))
+                ))
+            ))
+        )
+    )
+)
+; A simple explanation of the implementation of the rember algorithm --> The function rember checked each atom of the lat, one at a time, to see if it was the same as the atom and. If the car was not the same as the atom, we saved it to be consed to the final value later (think of the fibbonacci sequence implementation where the recurisve function continues expanding until it is reduced down to the base case, in this case, this recurisve function will continue expanding until either of the two conditionals specified turns out to be true), when rember found the atom, it dropped it, and consed the previous atoms back onto the rest of the lat.
+
+
+; we can further simplify the implemetation of the rember algorithm (as shown below):
+
+
+
+
+
