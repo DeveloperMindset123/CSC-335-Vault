@@ -127,7 +127,25 @@
 
 
 ; we can further simplify the implemetation of the rember algorithm (as shown below):
+(define rember 
+    (lambda (a lat)
+        (cond 
+            ((null? lat) (quote ()))
+            ((eq? (car lat) a) (cdr lat))
+            ; we are using the cons and the car primitives to hold the elements that has been reduced but aren't part of the element to be removed as we will be adding that back once an empty list gets returned or we found the element we are looking for (in which the case the cdr list will be returned and the elements extracted using car will be added back using cons to that mutated list)
+            (else (cons (car lat)
+            (rember a (cdr lat))
+            ))
+        )
+    )
+)
 
+; a more advanced form of the car primitive, is known as the first primitive, whcih is applied generally within nested lists --> it returns the first element within each of the nested lists
+; For example, suppose we were asked the following question : What is (first l) where l is ((apple peach pumpkin) (plum pear cherry) (grape raisin pea) (bean carrot eggplant)) --> the resulting out will be (apple plum grape bean) --> it reduces dimensionality by 1 and returns the first element within each of the corresponding nested lists.
+
+; In simple terms, the first primitive does the following  --> The function first takes one argument, a list, whcih is either a null list or contains only non-empty lists. It builds another list composed of first s-expressions of each internal lists.
+
+; The thid commandment states the following --> When building a list, describe the first typical element, and then cons it onto the natural recurison.
 
 
 
