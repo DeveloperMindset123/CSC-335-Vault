@@ -34,6 +34,9 @@
 (cond ((null? n) 0)
     (else (+ 1 (my-length (cdr n))))))
 
+; TODO: Implement the iterattive version --> provide the guessing invariant, strong, weak and good enough test, the pre and the post condition, induction proof.
+; TODO : Provide the appropriate developmental proof, in this case, since it's a recursion, provide the design idea
+
 ; HINT: The idea is suggested by (my-length '(a b c d)) = 4.
 
 ; run some test cases to see if my-length works as intended --> all test cases passed --> recursive implementation successfull
