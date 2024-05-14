@@ -202,57 +202,27 @@
 
 (define (but-last lst num)
 ; check if the correct type has been passed in
-(if (and (list? lst)(number? num))
+(if (and (list? lst)(number? num) 
 (begin
   (display " Parameters passed type checks, processing...")(newline)
   ; Actual logic implementation begins here
   ; store the length of the provided list using let binding
   (let list-length (my-length lst)
   ; check if the list-length happens to be less than the num that has been provided
-    (cond ((< list-length num) (error "The length of the list cannot be smaller than the number of elements to exclude from the list"))
+  (cond ((< list-length num) (error "The length of the list cannot be smaller than the number of elements to exclude from the list"))
   ; if the list length happens to be the same as the number of elements to remove or the list happens to be empty, it means we simply return an empty list 
         ((or (eq? list-length num) (null? lst)) (quote ()))
-        (else
-        ; termination case for our recursion function --> we just have to increment num until it reaches the length of the list (meaning if we need to exclude last 2 values and we ahve a list of length 5, we can keep incrementing num until it is the same as the length of the list (while simultaneously reducing and building the list, we already presaved using the let binding the original length of the list anyway
-         (if (eq? num list-length) (quote ()) 
+        ((> list-length num)
+        ; otherwise, proceed forward with the code 
+        (let length-to-iterate  (- list-length num)
+        ; termination case for our recursion function
+        (if (zero? length-to-iterate) (quote ()) 
         ; otherwise, recurisvely build the newlist
-        (else (cons (car lst)) (but-last (cdr lst) (+ num 1))))))))
+        (else (cons (car lst)) (but-last (cdr lst) (- length-to-iterate 1)))))))))
 (begin
-(error "Invalid argument types : expected (list, number)"))))
+(error "Invalid argument types : expected (list, number)")))))
 ; 5.  Write a function end that takes two arguments, lst and num, and returns the last num
 ; elements of lst.
-
-; exaple syntax --> (some-function '(1 2 3 4 5) 2) --> this means this function expects the last two values within the list to be returned --> we can take the num provided, and increment it by 1 until it reaches the value of the length of the original list, and return the list at that point, this will give us the s-expressions containing all the elements at the end (we also need to make sure that during each recursive call the list gets reduced using cdr and doesn't get rebuilt, since we aren't worried about the previous values anymore
-; The approach is similar to before, except it's even simpler, since all we need to do is return the inverse of the length, meaning we just pass in the (length - num) - 1 --> however, this approach would only be simpler if we were to implement it in the form of tail recursion
-
-; In regards to the recursive implementation, we would need a method to check and verify how this implementation would work
-
-(define (but-first lst num)
-  ; check if the correct type has been passed in
-  (if (and (list? lst) (number? num))
-      (begin
-        (display " Parameters passed type checks, processing...")(newline)
-        ; Note that correct syntax needs to be observed for let bindings, otherwise, it will result in an error --> we don't particularly need to rely on a let binding, however, it makes life easier than having to call on the my-length each time every call, we can use list-length to keep track of the list
-        (let ((list-length (my-length lst)
-                           (cond
-                             ((> num list-length) (error "Num cannot be greater than the length fo the original list"))
-                             ((or (null? lst) (zero? num) (eq? num list-length)) lst)
-                                 (else (but-first (cdr lst) (+ num 1))))))))
-      (begin
-        (display "Invalid argument types : expected (list, number)"))))
-
-; Note that a simpler recursive approach would be to iterate through the list until length is the same as num, and once that is the case, return that list instead
-(define (last-elements-only lst num)
-  ; check if the list is empty or num is 0, in that case, just return the list instead
-  (cond ((or (null? lst) (zero? num)) lst)
-        ; otherwise, check and compare to see if num matches the length of the list, if so return that list instead
-        ((eq? num (my-length lst) lst)
-         (else
-          ;recursively reduce the value
-          (last-elements-only (cdr lst) (- num 1))))))
-
-
-                                        
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
