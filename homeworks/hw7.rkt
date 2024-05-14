@@ -183,7 +183,10 @@
       ; In the case that we have reached the num that the index value specified, we simply cdr 
       ((zero? num) (cdr (cdr lst)))
       ; otherwise, recurisvely reduce and build the list
-      (else (cons (car lst) (return-all-except-index-num (cdr lst) (- num 1)))))))))
+      (else (cons (car lst) (return-all-except-index-num (cdr lst) (- num 1))))))
+      
+      (begin
+      (error "Invalid argument types : expected (list, number)")))))
 
 
 ; 5.  Write a function end that takes two arguments, lst and num, and returns the last num
