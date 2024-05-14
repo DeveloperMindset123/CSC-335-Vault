@@ -171,6 +171,9 @@
 
 
 ; let's first attempt to implement the recursive implementation of this algorithm --> we will simply need to cdr at the point where the nums appears (twice), rather than once and otherwise, the rest of the implementation can remain more or less the same
+
+;;NOTE : MY UNDERSTANDING OF THE QUESTION WAS INCORRECT, THIS ISN'T ASKING US TO SKIP THE ELEMENT AT THE INDEX NUM, BUT RATHER TO NOT RETURN THE NUMBER OF ELEMENTS SPECIFIED BY NUM FROM THE LIST FROM THE END OF THE LIST.
+
 (define (return-all-except-index-num lst num)
   ; perform type checking to make sure that we are passing in a list and number accordingly
   (if (and (list? lst) (number? num))
@@ -188,7 +191,36 @@
       (begin
       (error "Invalid argument types : expected (list, number)")))))
 
+; NOTE 2: THIS LOGIC, ALTHOUGH RIGHT, DOESN'T ADHERE TO THE ORIGINAL LOGIC OF THE FUNCTIION AS INTENDED
+; Clarification of what the question is actually asking us for:
+; The function should take two arguments, lst (a list) and num (a number --> integer to be specific), and return a new list that consists of all elements from lst except for the last num elements. For example:
+; - (but-last (quote (1 2 3 4 5)) 2) should return (1 2 3) --> meaning we don't include the last 2 elements in this case
+; - (but-lst (quote (1 2 3 4 5)) 0) should return (1 2 3 4 5) --> meaning we return a copy of the original list because the index value specified is 0
 
+; Based on this new information, we will need to modify our approach, the approach toward solving this problem has to differ as well.
+; We will still need to iterate through the list from the left, however, the modificaton we will need to make is the following --> We will first need to find out the total length of the list, and then check to see if the length of the happens to be smaller than the value specified, which will result in an error (because we cannot exclude more elmeents within a list than the value specified if it contains less elements than num to begin with)
+
+(define (but-last lst num)
+; check if the correct type has been passed in
+(if (and (list? lst)(number? num) 
+(begin
+  (display " Parameters passed type checks, processing...")(newline)
+  ; Actual logic implementation begins here
+  ; store the length of the provided list using let binding
+  (let list-length (my-length lst)
+  ; check if the list-length happens to be less than the num that has been provided
+  (cond ((< list-length num) (error "The length of the list cannot be smaller than the number of elements to exclude from the list"))
+  ; if the list length happens to be the same as the number of elements to remove or the list happens to be empty, it means we simply return an empty list 
+        ((or (eq? list-length num) (null? lst)) (quote ()))
+        ((> list-length num)
+        ; otherwise, proceed forward with the code 
+        (let length-to-iterate  (- list-length num)
+        ; termination case for our recursion function
+        (if (zero? length-to-iterate) (quote ()) 
+        ; otherwise, recurisvely build the newlist
+        (else (cons (car lst)) (but-last (cdr lst) (- length-to-iterate 1)))))))))
+(begin
+(error "Invalid argument types : expected (list, number)")))))
 ; 5.  Write a function end that takes two arguments, lst and num, and returns the last num
 ; elements of lst.
 
