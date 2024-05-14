@@ -161,7 +161,30 @@
 (display "Test case 3, passing in the incorrect datatype and checking if the correct error message gets printed out in the terminal or not, mismatched position of arguments results in --> ")(elements-before-num 2 (quote (1 2 3 4)))(newline)
 
 ; 4.  Write a function but-last that takes two arguments, lst and num, and which returns the
-; list of all but the last num elements of lst.
+; list of all but the last num elements of lst. --> does this mean it skips the num element and returns every other element in the list?
+
+; The question is somewhat vague and thus makes it difficult to understand what it's asking for explicitly, however, based on going on the assumption that we are to develop an algorithm that returns all the elements left of num and all the elements right of num index, but exclude num index we can implement the following intutition:
+
+; 1. Develop a helper function to develop the left side of the list
+; 2. Develop a helper function to develop the right side of the list
+; 3. Call them both within a single function
+
+
+; let's first attempt to implement the recursive implementation of this algorithm --> we will simply need to cdr at the point where the nums appears (twice), rather than once and otherwise, the rest of the implementation can remain more or less the same
+(define (return-all-except-index-num lst num)
+  ; perform type checking to make sure that we are passing in a list and number accordingly
+  (if (and (list? lst) (number? num))
+  (begin
+    (display "Parameters passed type checks, processing...")(newline)
+    ; Implement logic for building list
+    (cond 
+      ; Applying the first amedment, we will always need to ensure that list passes the null? check
+      ((null? lst) (quote ())
+      ; In the case that we have reached the num that the index value specified, we simply cdr 
+      ((zero? num) (cdr (cdr lst)))
+      ; otherwise, recurisvely reduce and build the list
+      (else (cons (car lst) (return-all-except-index-num (cdr lst) (- num 1)))))))))
+
 
 ; 5.  Write a function end that takes two arguments, lst and num, and returns the last num
 ; elements of lst.
