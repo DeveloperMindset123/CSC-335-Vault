@@ -182,6 +182,24 @@
 ; when using cdr, test termination with null? and when using sub1, test termination using zero?
 ; Note the following in regards to the leftmost function --> The function leftmost finds the leftmost atoms in a non-empty array list of S-expressions that does not contain an empty list.
 ; eqlist? --> a predicate used to determine if two lists are equal or not
+; The sixth commandment --> simplify only after the function is correct
+; expression related to arithmetic expressions cannot contain paranthases
+; note the primitive named numbered? --> another predicate value
+; also note the primtive value
+
+; The seventh commandment states the following --> Recur on the subparts that are the same nature:
+; - on the sublist of a list and - on the subexpressions of an arithmetic expression.
+; the 8th commandment --> use help functions to abstract from representations
+
+#| for the implementation, refer to chapter 8 of tls |#
+; note the newly introduced primitive named set? --> as the name suggests, it is used to check if a list is a set or not
+; Describe in your own words how the primtiive makeset works --> The function makeset remembers to cons the first atom in the lat onto the result of the natural recursion, after removing all occurences of the first atom from the rest of the lat --> as the purpose of a set is to remove duplicate values, at least in the context of programming.
+; as followup to set?, there's subset? primitive as well --> used to check if one set is a subset of another --> Then there's also eqset? --> as the name  suggests, it's used to check if two sets are equal to one another.
+
+; The intersect function is used to retrieve the values that interset between two sets, recall the intersection venn diagram we learned in discrete math.
+; the union function is used to retrieve all the values that are contained within two sets (combined together, with duplicates removed)
+; the intersectall function takes in a nested list (with the inner list being list of atoms), and outputs a value that is shared amongst all of them.
+
 
 
 
