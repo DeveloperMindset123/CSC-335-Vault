@@ -147,6 +147,9 @@
 
 ; The thid commandment states the following --> When building a list, describe the first typical element, and then cons it onto the natural recurison.
 
+; the fourth commandment states the following --> always change at least one argument while recurring. It must be changed to be closer to termination. The chaning argument must be tested in the termination condition: when using cdr, test termination using null?/
+; when it comes to atoms, we do not consider negative numbers. --> nor do we consider floating point values as numbers
+
 
 
 
