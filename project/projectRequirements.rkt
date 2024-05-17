@@ -26,6 +26,7 @@ Problems
 ;--------
 ;
 1.  Add a new primitive to TLS
+
 ;
 2.  Change the representation of bindings in the system to explicit pairs of the form (name value)
 ;
