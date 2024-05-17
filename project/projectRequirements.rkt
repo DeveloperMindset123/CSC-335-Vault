@@ -80,6 +80,12 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
 ; explanation : uses a cons to add a new entry to the front of the table
 
 (define extend-table cons)
+#|
+Reason why extend-table remains unchanged --> it's purpose and functionality already align with the new representaiton of bindings as explicit pairs. Let's break down this funciton:
+
+- The extend-table function is used to add a new entry to the environment (table). It essentially prepends the new entry to the existing list of entries, forming a new environment.
+
+|#
 
 
 ; purpose : to find the values assocaited with a name in a single entry of the table
