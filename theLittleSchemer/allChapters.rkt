@@ -396,6 +396,68 @@ NLP explanation of what shift does --> The function shift takes a pair whose fir
             ((eq? e (quote number?)) *const)
             (else *identifier))))
 
+            ; continue at 181
+; Note that the following is the function defintiion for list-to-action
+(define list-to-action
+    (lambda (e) 
+        (cond 
+            ((atom? (car e))
+            (cond 
+                ((eq? (car e) (quote quote))
+                *quote)
+                ((eq? (car e) (quote lambda))
+                *lambda)
+                ((eq? (car e) (quote lambda))
+                *lambda)
+                ((eq? (car e) (quote cond))
+                *cond)
+                (else *application)))
+                (else *application))))
+
+
+; Note that the following shows the implementation for constants
+(define *const 
+    (lambda (e table)
+        (cond 
+        ; if parameter e happens to be a number, return e
+            ((number? e) e)
+            ; if prameter e happens to be the boolean value #t, return #t instead
+            ((eq? e #t) #t)
+            ; similarly, if the eq operator happens to return true when comparing e to #f, return #f instead
+            ((eq? e #f) #f)
+            ; otherwise, call on the build function (refer above to see how the build function was implemented) --> all other atoms of constant type represent primtiives
+            (else (build (quote primitive) e)))))
+
+; note the following is the implemenetation of the action known as quite
+(define *quote 
+    (lambda (e table)
+    ; NOTE: we need to define the hlper function text-of as well.
+        (text-of e)
+    )
+)
+
+; understanding the purpoe of why we need tables --> to remember the value of the identifiers.
+; Note that the following shows the implementation of *identifier
+(define *identifier 
+    (lambda (e table) 
+    ; the function lookup in table accepts 3 parameters, the function *identifier accepts 2 arguments
+        (lookup-in-table e table initial-table)
+    )
+)
+
+; wonder how we would define predicate checkers such as primtive?  and non-primitive?
+(define primitive? 
+    (lambda (l)
+        (eq? (first l) (quote primitive))))
+
+(define non-primitive? 
+    (lambda (l)
+        (eq? (first l) (quote non-primitive))
+    )
+)
+        
+    
+
 
 
 
