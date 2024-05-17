@@ -86,16 +86,22 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
 ; explanation : uses a helper function to look for name in a specific entry (a pair of lists : names and values)
 (define lookup-in-entry
   (lambda (name entry entry-f)
-    (lookup-in-entry-help name
-                          (names entry)
-                          (vals entry)
+    (lookup-in-entry-help name entry
+                          ;(names entry) --> this parameter value is no longer being used, lookup-in-entry-help takes in 3 parameters instead
+                         ; (vals entry) --> this parameter value is no longer being used, lookup-in-entry-help takes in 3 parameter to follow the pair format of (name value)
                           entry-f)))
 
 
 ; purpose : helper function for lookup-in-tnry
 ; explanation : recursively checks each name in the list until it finds a match or runs out of names
 (define lookup-in-entry-help
-  (lambda (name names vals entry-f)
+  (lambda (
+     name 
+     ; instead, define a new parameter named entries
+     entries 
+     ;names --> commented it out since we will not store the names in a seperate list of it's own
+     ;vals  --> commented it out since we will not store the corresponding vals in a seperate lists of it's own
+     entry-f)
     (cond
       ((null? names) (entry-f name))
       ((eq? (car names) name) (car vals))
@@ -108,21 +114,30 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
 
 ; purpose : to crate a new-entry
 ; explanation : uses build to craete a new entry, which is a pair of name and value lists.
-(define new-entry build)
+; define the function logic for new-entry, right now it is simply initialized
+(define new-entry
+     ; use map and cons to create pairs from the lists of names and values
+     (lambda (names values)
+     ; recall that we build lists using cons, so we are iterate --> ntoe the following in regards to the map primitive in scheme --> map is a built in function that takes a function and a list as it's argument, and returns the list that results by applying the function to every element of the list, in this case, the function we are passing in is cons and the lists it is being applied to are names and values, particularly creating pairs based on each of their individual elements.
+          (map cons names values)
+     )
+)
 
 ; purpose : to extract names and values from an entry
 ; explanatiion : names returns a list of names, vals returns the list of values from an entry (since the pair are in name value format, think similar to a hashmap)
+#| --> these functions are no longer needed since we are no longer worried about storing names and vals on seperate lists of their own.
 (define names
   (lambda (entry) (car entry)))
 
 (define vals
   (lambda (entry) (cadr entry)))
-
-
+|#
 
 
 ; the top level of the interpreter
-#|value and meaning serves as the entry points for evaluating expressions|#
+#|
+- value and meaning serves as the entry points for evaluating expressions
+|#
 
 ; purpose : entry point to evaluate an expression
 ; explanation : calls meaning with an expression 'e' on the empty table (meaning is a helper function in this case)
@@ -171,6 +186,8 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
       ((eq? e (quote mul)) *const)
       ((eq? e (quote sub1)) *const)
       ((eq? e (quote number?)) *const)
+      ; Add the square primitive
+      ((eq? e (quote square)) *const)
       (else *identifier))))
 
 ; purpose : to handles lists in expressions
@@ -277,7 +294,8 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
 (define cond-lines-of cdr)
 
 
-
+; purpose : to evaluate a list of arguments
+; explanation : evaluates each argument in the list and returns a list of the results.
 (define evlis
   (lambda (args table)
     (cond 
@@ -287,7 +305,8 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
              (evlis (cdr args) table))))))
 
 
-
+; puprose : to handle function applications
+;  applies the function to it's arguments after evaliating both
 (define *application
   (lambda (e table)
     (myapply
@@ -310,18 +329,23 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
     (eq? (first l) (quote non-primitive))))
 
 
-
+; purpose : to apply function to it's arguments
+; explanation : checks if the function is primtive or non-primtiive and applies it accordingly
 (define myapply
   (lambda (fun vals)
     (cond
+    ; if the function is ineed a primitive, call on the myapply-primitive function
       ((primitive? fun)
        (myapply-primitive
         (second fun) vals))
+        ; in the case that the function happens to be a non-primitive, call on the function myapply-closire
       ((non-primitive? fun)
        (myapply-closure
         (second fun) vals)))))
 
 
+; purpose : to apply a primtiive function
+; explanation: matches the name to a known primitive operation and applies it to it's arguments.
 (define myapply-primitive
   (lambda (name vals)
     (cond
@@ -340,6 +364,7 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
       ((eq? name (quote zero?))
        (zero? (first vals)))
       ((eq? name (quote add1))
+      ; defines the function logic for add1 as a lambda function
        ((lambda (x) (+ x 1)) (first vals)))
       ((eq? name (quote mul))
        (* (first vals) (second vals)))
@@ -348,7 +373,13 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
 ;;;; TODO: deliberate error: ask class to figure out how to repair it.  
       
       ((eq? name (quote number?))
-       (number? (first vals))))))
+       (number? (first vals)))
+       ; added square primitive
+       ((eq? name (quote square))
+       ((lambda (x) (* x x)) (first vals))
+       )
+       
+       )))
 
 
 (define :atom?
@@ -362,6 +393,7 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
        #t)
       (else #f))))
 
+; purpose : to apply a non-primitive (lambda) function.
 (define myapply-closure
   (lambda (closure vals)
     (meaning (body-of closure)
@@ -370,6 +402,7 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
                (formals-of closure)
                vals)
               (table-of closure)))))
+; explanation : evaluates the body of the lambda with the provided arguments in the extended environment.
 
 #|
 As part of the project requirement, it will be helpful to complete hw 11 --> once complete, add it as part of the explanation for the project
@@ -385,11 +418,27 @@ Problems
 ;--------
 ;
 1.  Add a new primitive to TLS
+We can add a new primitive named square --> look at the comments in the function to see how it was implemented.
 
 
 ;
 2.  Change the representation of bindings in the system to explicit pairs of the form (name value)
-;
+Refer to the code block  for the functions lookup-in-entry, lookup-in-entry-help, new-entry, extend-table, initial-table to see the modifications that has been made.
+
+Understanding what the question means when it asks us to change the representation of bindings in the system to explciit pairs of the form:
+--> Changing the representation of bindings in the system to explciit pairs of the form '(name value)', means that instead of having seperate lists for variable names and their corresponding values, each binding is represented as a pair (a two element list or a cons cell), where the first element is the variable name and the second element is the value itself, similar to a hashmap.
+
+--> prior to the change in the representaiton of bindings is:
+(define names (quote (a b c))) ; we have a list for names
+(define vals (quote (1 2 3))) ; we have a list for vals
+
+--> representaiton after the change has been implemented
+(define bindings '((a . 1) (b . 2) (c . 3)))
+
+Why is this change even neccessary?
+- clarity and simplicity : using explicit pairs makes it clear which value corresponds to which variable name.
+- efficiency : Accessing a value given it's name can be more straightforward because each pair directly associates a name with it's value.
+- consistency : Many programming language and data structure uses key-value pairs (hashamps in javascript and dictionaries in python)
 ;
 3.  Write, and prove correct, a syntax checker for TLS-Scheme.  Use the inductive definition of TLS-Scheme
      given in class.  You will need to give a complete specification for your program, which should
@@ -424,3 +473,26 @@ Problems
 
 
 ;; 3.  Write and prove correct an interpreter for TLS extended by let*.
+
+#|
+The purpose of an scheme interpreter is simple : 
+- it is used to understand at a low level how scheme code is interpreted and executed. By constructing an interpreter, you get to see this step-by-step process of evaluating expressions, managing environments, applying functions and handling various forms of data.
+
+Environment subsystem --> to manage variable bindings (environments) and look up variable values
+Entry constructors and selectors --> to create and manipulate entries in the environment.
+Top level of an interpreter --> the main functions that start the evaluation process.
+Expression Dispatch --> To classify and dispatch expressions to the correct evaluation function.
+Action Functions --> To evaluate specific types of expressions.
+Applying functions --> To handle the application of functions to arguments.
+
+If we were to put everything together, we would get the following flow:
+When you evaluate a Scheme Expression using this interpreter, here's what happens step by step:
+1. start evaluation : you call value with an expression. This initializes the evaluation with an empty environment.
+2. determine meaning : value calls meaning, which decides what kind of expression it is (atom or list) using expression-to-action
+3. Handle expressions : Depending on the type of expression that is being provided in the parameter:
+          - Atoms : atom-to-action handles constants and identifier.
+          - Lists : list-to-action handles function applications and special forms.
+4. evaluate component : For complex expressions (like function applications), sub-expressions (like functions and arguments) are evaluated recursively --> as we can see, the root of the scheme interpreter relies on recursion.
+5. Apply functions : If it's a function application, '*application' and 'myapply' handle applying the function to it's arguments.
+6. Return Result : The final result of the expression is returned.
+|#
