@@ -208,9 +208,9 @@
 ; Note the fun? primtiive, very simple one liner implementaiton as shown below: (with the implementation of first, second and build provided as well)
 
 ; first is used to retrieve the first element within a list
-(define first (lambda (p) (cond (else (car p)))))
+(define firsts (lambda (p) (cond (else (car p)))))
 ; second is used to retrieve the second element within a list
-(define second (lambda (p) (cond (else (car (cdr p))))))
+(define seconds (lambda (p) (cond (else (car (cdr p))))))
 (define build (lambda (l) (car (cdr (cdr l)))))
 
 ; now we can define the fun? primitive --> used to check if a list consists of pairs as it's elements or not  
@@ -219,7 +219,30 @@
 ; how do we represent a finite function ? --> For us, a finite function is a list of pairs in whcih no first elemnent of any pair is the same as any other first element.
 
 ; note the following implementation of revrel function
+(define revrel (lambda (rel)
+    (cond 
+        ((null? rel) (quote ()))
+        (else (cons (cons 
+            (car (cdr (car rel)))
+            (cons (car (car rel)))
+            (quote ())))
+            (revrel (cdr rel))))))
 
+; example use of revrel --> what is (revrel rel) where rel = ((8 a) (pumpkin pie) (got sick)) --> ((a 8) (pie pumpkin) (sick got)) --> as we can see, it swaps the first and second element within each pair
+
+; similarly, we can write a function named revpair, which reverses the two components of a pair instaed of their idnividual elements.
+(define revpair (lambda (pair) (build (second pair) (first pair))))
+
+; we can use revpair as a helper within the revrel function as well, and the implementation will be defined as the following:
+(define revrel (lambda (rel) 
+    (cond 
+        (null? rel) (quote ())
+        (else (cons (revpair (car rel))
+                (revrel (cdr rel)))))))
+
+
+; implementation of the fullfun? predicate --> defined below --> fullfun? is also known as one-to-one
+(define fullfun (lambda (fun) set? (seconds fun)))
 
 
 
