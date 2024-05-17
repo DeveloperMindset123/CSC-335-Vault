@@ -148,8 +148,40 @@
 ; The thid commandment states the following --> When building a list, describe the first typical element, and then cons it onto the natural recurison.
 
 ; the fourth commandment states the following --> always change at least one argument while recurring. It must be changed to be closer to termination. The chaning argument must be tested in the termination condition: when using cdr, test termination using null?/
-; when it comes to atoms, we do not consider negative numbers. --> nor do we consider floating point values as numbers
+; when it comes to atoms, we do not consider negative numbers. --> nor do we consider floating point values as numbers --> in regards to the atom? primitive, we only consider nonnegative integers
 
+; suppose there's a primitive named add1 --> as the name suggest, it adds 1 to the integer value provided as it's parameter --> an example would be suppose we were to write --> (add1 67) --> 68 --> same holds true for sub1
+
+; cons builds lists and add1 builds numbers
+; note the primtive tup? which handles whether a list is a tuple or not --> example code would be  --> Is (2 11 3 79 47 6) considered a tuple? --> yes, as it's a list of numbers --> a list such as (1 2 8 apple 4 3) would however not be considered a tuple, tuples require all it's elements to be numbers, strings and alphabetical values aren't allowed --> that list however would be conisdered a list of atoms --> nested numbered list wouldn't be considered a tuple either --> an example being (3 (7 4) 13 9) --> () would be considered a tuple
+
+; knowing the tup? primitive, which acts as a boolean predicate, takes us to the primtiive addtup, which deals with adding up all the tuple values into a single number.
+
+; the most natural way to build numbers is to use + instead of cons (cons is used to build lists)
+; natural recursion of a list is (cdr lat), similarly, natural recursion of a tuple would be (cdr tup)
+; natural recursion of a number is (sub1 n) where n represents a nonnegative integer
+
+; The first commandment of number is the following --> When recurring on a list of atoms, lat, ask two questions about it : (null? lat) and else
+; When recurring on a number, n, ask two questions about it : (zero? n) and else
+
+; revised version of the 4th commandment stated earlier --> Always change at least one argument while recurring. It must be changed to be closer to termination. The chaning argument must be tested in the termination condition. The chaning argument must be tested using the following two clauses --> for lists, when using cdr, test termination using null? and when using sub1, test termination using zero?
+
+; The 5th commandment states the following (rules for termination) --> When a building a value using +, always use 0 for the value of the termination line, for adding 9 does not change the value of an addition.
+; when building a value with x, always use 1 for the value of the terminating line, for multiplying by 1 does not change the value of a multiplication
+; when building a value with cons, always consider () for the value of the terminating line.
+
+; a revised version of the very first amendment --> When recurring on a list of atoms, lat, ask two questions about it : (null? lat) and else.
+; when recurring on a number, n, ask questions about it : (zero? n) and else
+; when recurring on a list of S-expressions, l, ask three questions about it : (null? l), (atom? (car l)), and else.
+
+
+; The 4th commandment states the following:
+; Always change at least one argument while recurring. When recurring on a list of atoms, lat, use (cdr lat).  When recurring on a number, n, use (sub1 n). When recurring on a list of s-expressions l, use (car l) and (cdr l) if neither (null? l) nor (atom? (car l)) are true.
+
+; it must be changed to closer to termination. The chaning argument must be tested in the termination condition.
+; when using cdr, test termination with null? and when using sub1, test termination using zero?
+; Note the following in regards to the leftmost function --> The function leftmost finds the leftmost atoms in a non-empty array list of S-expressions that does not contain an empty list.
+; eqlist? --> a predicate used to determine if two lists are equal or not
 
 
 
