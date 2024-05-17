@@ -243,6 +243,84 @@
 
 ; implementation of the fullfun? predicate --> defined below --> fullfun? is also known as one-to-one
 (define fullfun (lambda (fun) set? (seconds fun)))
+; example uses --> is ((chocolate chip) (cookie dough)) a one-to-one function? --> yes
+
+; function definition for rember-f which is used to specify a predicate, a atom and a list from the atom specified is to be removed, predicate generally passed in is eq
+(define rember-l 
+    (lambda (test?)
+        (lambda (a l)
+            (cond 
+                ((null? l) (quote ()))
+                ((test? (car l) a) (cdr l))
+                (else (cons (car l)
+                    ((rember-f test?) a (cdr l))
+                ))
+            )
+        )
+    )
+)
+
+; example uses of the rember function
+; what is ((rember-f eq?) a l) where a is tuna and l is (shrimp salad and tuna salad) --> (shrimp salad and salad) will be the resulting list, with the tuna atom removed
+
+;  the ninth commandment states the following  --> abstract common patterns as a new function.
+; implementation of value primitive discussed previously (in code):
+(define value
+    (lambda (nexp)
+        (cond 
+            ((atom? nexp) nexp)
+            ((eq? (operator nexp)
+                (quote +)
+            ))
+            (plus (value (1st-sub-exp nexp))
+            (value (2nd-sub-exp nexp))))
+            ((eq? (operator nexp)
+                (quote x))
+                (x (value (1st-sub-exp nexp))
+                (value (2nd-sub-exp nexp))))
+                (else 
+                (^ (value (1st-sub-exp nexp))
+                (value (2nd-sub-exp nexp)))))))
+
+
+; the above implementation is lengthy and difficult to understand and we can simplify it using a helper funciton named atom-to-function which does the following:
+#|
+    Can you write the function atom-to-function which :
+1 . Takes one argument x and 2. returns the function +
+if (eq? x (quote +)) returns the function x
+if (eq? x (quote x )) and returns the function t
+otherwise?
+|#
+(define atom-to-function (lambda (x)
+(cond
+((eq? x (quote +)) + ) ((eq? x (quote x )) x ) (else t))))
+
+; value redefined using atom-to-function
+(define value (lambda (nexp)
+(cond
+((atom? nexp) nexp)
+(else
+((atom-to-function (operator nexp))
+(value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp)))))))
+
+; multirember vs multirember-f implementaiton:
+(define multirember (lambda (a lat)
+(cond
+((null? lat) (quote ())) ((eq? (car lat) a)
+(multirember a (cdr lat))) (else (cons (car lat)
+(multirember a (cdr lat)))))))
+
+(define multirember-f (lambda (test?)
+(lambda (a lat) (cond
+((null? lat) (quote ())) ((test? a (car lat))
+((multirember-f test?) a (cdr lat)))
+(else (cons (car lat) ((multirember-f test?) a
+(cdr lat))))))))
+
+; Tenth commandment states the following --> build functions to collect more than one value at a time
+; note the following primitive for looking --> a helper functipn named keep-looking also needs to be defined
+
+
 
 
 
