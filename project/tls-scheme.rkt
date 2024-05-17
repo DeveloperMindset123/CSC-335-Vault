@@ -17,6 +17,9 @@
 
 ; auxiliary functions
 
+#|
+build, first, second and third and atom are basic utility functions to manipulate lists and check atomic values
+|#
 (define build
   (lambda (s1 s2)
     (cons s1 (cons s2 (quote ())))))
@@ -35,6 +38,9 @@
 
 
 ; environments implemented as tables
+#|
+Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and vals manage environments, which are mapping of variable names to their values.
+|#
 
 
 (define lookup-in-table
@@ -48,6 +54,7 @@
                                                 (cdr table)
                                                 table-f)))))))
 
+;TODO: this function needs to be defined, refer to the tls to see how the function was implemented.
 (define extend-table cons)
 
 
@@ -86,6 +93,7 @@
 
 
 ; the top level of the interpreter
+#|value and meaning serves as the entry points for evaluating expressions|#
 
 (define value
   (lambda (e)
@@ -100,6 +108,9 @@
 ; supporting functions for the intepeter
 
 ; syntax-directed dispatch on expression
+#|
+- The functions (*const, *quote, *identifier, *lambda, *cond, *application) define the semantics for different types of expressions. --> in context to programming, semantics refers to pieces of code.
+|#
 
 (define expression-to-action
   (lambda (e)

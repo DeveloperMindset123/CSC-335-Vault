@@ -455,7 +455,9 @@ NLP explanation of what shift does --> The function shift takes a pair whose fir
         (eq? (first l) (quote non-primitive))
     )
 )
-        
+
+; note the following --> there's 2 kinds of functions out there --> primitives and non-primitives.
+
     
 
 
