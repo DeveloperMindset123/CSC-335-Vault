@@ -200,6 +200,26 @@
 ; the union function is used to retrieve all the values that are contained within two sets (combined together, with duplicates removed)
 ; the intersectall function takes in a nested list (with the inner list being list of atoms), and outputs a value that is shared amongst all of them.
 
+; note the a-pair? primitive is used to check if any list contains 2 s-expressions exactly, if so return #t and otherwise return #f.
+; Something interesting to note --> How can you build a pair with two atoms? --> You cons first onto the cons of the second one into (), syntactically, it looks like the following --> (cons x1 (cons x2 (quote ())))
+
+; introducing the concept of pair, we can have three component functions that will help build other HOCs --> first, second and build (refer to chapter 8 for their implementation on tls)
+
+; Note the fun? primtiive, very simple one liner implementaiton as shown below: (with the implementation of first, second and build provided as well)
+
+; first is used to retrieve the first element within a list
+(define first (lambda (p) (cond (else (car p)))))
+; second is used to retrieve the second element within a list
+(define second (lambda (p) (cond (else (car (cdr p))))))
+(define build (lambda (l) (car (cdr (cdr l)))))
+
+; now we can define the fun? primitive --> used to check if a list consists of pairs as it's elements or not  
+(define fun? (lambda (rel) (set? (first rel))))
+
+; how do we represent a finite function ? --> For us, a finite function is a list of pairs in whcih no first elemnent of any pair is the same as any other first element.
+
+; note the following implementation of revrel function
+
 
 
 
