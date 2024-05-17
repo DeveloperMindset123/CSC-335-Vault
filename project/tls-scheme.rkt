@@ -21,6 +21,7 @@
   (lambda (s1 s2)
     (cons s1 (cons s2 (quote ())))))
 
+; Note that this has been defined earlier within tls itself refer to the notes from allChapters
 (define first car)
 
 (define second cadr)
@@ -290,7 +291,7 @@
        (* (first vals) (second vals)))
       ((eq? name (quote sub1))
        (sub1 (first vals)))
-;;;; deliberate error: ask class to figure out how to repair it.  
+;;;; TODO: deliberate error: ask class to figure out how to repair it.  
       
       ((eq? name (quote number?))
        (number? (first vals))))))
