@@ -320,6 +320,83 @@ otherwise?
 ; Tenth commandment states the following --> build functions to collect more than one value at a time
 ; note the following primitive for looking --> a helper functipn named keep-looking also needs to be defined
 
+; function definition for keep-looking
+(define keep-looking
+    (lambda (a sorn lat)
+        (cond 
+            ((number? sorn)
+            (keep-looking a (pick sorn lat) lat))
+            (else (eq? sorn a)))))
+
+; sorn --> stands for symbol or number
+; what is unusual about keep-looking? -> it does not recur on a part of a lat.
+
+; note that the shift function is used to implement the following:
+#|
+(shift x) where x is ((a b)(c d)) will turn out to be (a (b (c d)))
+function definition for shift
+(define shift (lambda (pair) (build (first (first pair)) (build (second (first pair)) (second pair)))))
+
+NLP explanation of what shift does --> The function shift takes a pair whose first component is a pair and builds a pair by shifting the second part of the first component into the second component.
+|#
+
+; Note that the following is the length function redefined:
+((lambda (mk-length) (mk-length mk-length))
+(lambda (mk-length) (lambda (l)
+(cond
+((null? l) 0) (else (add1
+(mk-length (cdr l))))))))
+
+; understanding the purpose of the following funciton named lookup-in-table (the following is the implementation):
+(define lookup-in-table 
+    (lambda (name table table-f)
+        (cond 
+            ((null? table) (table-f name))
+            (else (lookup-in-entry name 
+                (car table)
+                (lambda (name)
+                    (lookup-in-table name
+                        (cdr table)
+                        (table-f))))))))
+
+; understanding the implementation of a portion of the code snippet --> the function is the snippet of action to take when the name is not found in the first entry.
+(lambda (name)
+    (lookup-in-table name
+        (cdr table)
+        (table-f)
+    )
+)
+
+; note that below represents a function that produces the correct action (or function) for each possible s-expression --> utilizes the atom-to-action function
+(define expression-to-action
+    (lambda (e) 
+        (cond 
+            ((atom? e) (atom-to-action e))
+            (else (list-to-action e)))))
+
+; the following is the function definiiton for atom-to-action 
+(define atom-to-action 
+    (lambda (e) 
+        (cond 
+            ; TODO: understand this function throughly to understand it's purpose, the syntax is a bit confusing atm
+            ; list of conditionals to check what type of value e is
+            ; check if paraemter e is a number or not
+            ((number? e) *const)
+            ((eq? e #t) *const)
+            ((eq? e #f) *const)
+            ((eq? e (quote cons)) *const)
+            ((eq? e (quote car)) *const)
+            ((eq? e (quote cdr)) *const)
+            ((eq? e (quote null?)) *const)
+            ((eq? e (quote eq?)) *const)
+            ((eq? e (quote atom?)) *const)
+            ((eq? e (quote zero?)) *const)
+            ((eq? e (quote add1)) *const)
+            ((eq? e (quote sub1)) *const)
+            ((eq? e (quote number?)) *const)
+            (else *identifier))))
+
+
 
 
 
