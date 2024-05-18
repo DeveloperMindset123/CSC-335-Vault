@@ -91,7 +91,9 @@ Reason why extend-table remains unchanged --> it's purpose and functionality alr
 ; purpose : to find the values assocaited with a name in a single entry of the table
 ; explanation : uses a helper function to look for name in a specific entry (a pair of lists : names and values)
 (define lookup-in-entry
+; annoynomous function that tkaes in 3 parameters
   (lambda (name entry entry-f)
+  ; the helper function is called and the 3 parameters that has been initialized gets passed in on lookup-in-entry-help helper function.
     (lookup-in-entry-help name entry
                           ;(names entry) --> this parameter value is no longer being used, lookup-in-entry-help takes in 3 parameters instead
                          ; (vals entry) --> this parameter value is no longer being used, lookup-in-entry-help takes in 3 parameter to follow the pair format of (name value)
@@ -109,12 +111,23 @@ Reason why extend-table remains unchanged --> it's purpose and functionality alr
      ;vals  --> commented it out since we will not store the corresponding vals in a seperate lists of it's own
      entry-f)
     (cond
-      ((null? names) (entry-f name))
-      ((eq? (car names) name) (car vals))
+    ; first commandment, check for empty or 0 values --> in this case, we are checking if name happens to be a empty list or not --> this will be the termination case of the recursion as names is being reduced each time.
+    ; Following 2 lines of code shows the modification that has been made to the code
+    ((null? entries) (entry-f name))
+    ((eq? ((caar entries) name)(cdar entries))
+
+
+    ; we are no longer checking the names list, since names is no longer a parameter being used
+      ;((null? names) (entry-f name))
+     ; the commented out line below has been modified
+      ;((eq? (car names) name) (car vals))
+
+      ; recursive function call (also has been modified)
       (else (lookup-in-entry-help name
-                                  (cdr names)
-                                  (cdr vals)
-                                  entry-f)))))
+      ; replaced name with entries for the cdr primitive 
+                                  (cdr entries)
+                                  ;(cdr vals) --> cannot be used since vals is no longer a parameter value
+                                  entry-f))))))
 
 
 
@@ -211,8 +224,15 @@ Reason why extend-table remains unchanged --> it's purpose and functionality alr
           *lambda)
          ((eq? (car e) (quote cond))
           *cond)
+          ((eq? (car e) (quote let)) *let) ; Add let handling
+          ((eq? (car e) (quote let* )) *let*) ; Add let* handling
+          ; call on application if car expression is an atom but doesn't meet any of the requirements
          (else *application)))
+         ; call on *application if the car expression isn't an atom to begin with
       (else *application))))
+
+
+; continued implementation relevant to q4 has been defined below
 
 
 ; operational semantics -- the definitions of the action functions
@@ -375,13 +395,14 @@ Reason why extend-table remains unchanged --> it's purpose and functionality alr
       ((eq? name (quote mul))
        (* (first vals) (second vals)))
       ((eq? name (quote sub1))
-       (sub1 (first vals)))
+       ((lambda (x) (- x 1)) (first vals)))
 ;;;; TODO: deliberate error: ask class to figure out how to repair it.  
       
       ((eq? name (quote number?))
        (number? (first vals)))
        ; added square primitive
        ((eq? name (quote square))
+       ; use annoynomous function to define the logic for squaring a number
        ((lambda (x) (* x x)) (first vals))
        )
        
@@ -426,13 +447,25 @@ Problems
 1.  Add a new primitive to TLS
 We can add a new primitive named square --> look at the comments in the function to see how it was implemented.
 
-
+Simple Proof to explain the changes that has taken place:
+- Basis : square does not occur in numbers or booleans, thus vacuously true.
+- induction hyphothesis : Assume square is correctly evaluated in subexpressions
+- induction step : For each expression type (e.g. cond, lambda, quote), if square appears, it's handled correctly by myapply-primitive.
 ;
 2.  Change the representation of bindings in the system to explicit pairs of the form (name value)
 Refer to the code block  for the functions lookup-in-entry, lookup-in-entry-help, new-entry, extend-table, initial-table to see the modifications that has been made.
 
 Understanding what the question means when it asks us to change the representation of bindings in the system to explciit pairs of the form:
---> Changing the representation of bindings in the system to explciit pairs of the form '(name value)', means that instead of having seperate lists for variable names and their corresponding values, each binding is represented as a pair (a two element list or a cons cell), where the first element is the variable name and the second element is the value itself, similar to a hashmap.
+--> Changing the representation of bindings in the system to explicit pairs of the form '(name value)', means that instead of having seperate lists for variable names and their corresponding values, each binding is represented as a pair (a two element list or a cons cell), where the first element is the variable name and the second element is the value itself, similar to a hashmap.
+
+Explanation in regards to the correctness
+Correctness: (begin)
+Ensuring that the modified environment subsystem still satisfies the specification
+
+- Lookup : Correctly retrieves the value associated with a name.
+- Extend : Correctly adds new bindings without affecting existing functionality.
+
+End of correctness proof here
 
 --> prior to the change in the representaiton of bindings is:
 (define names (quote (a b c))) ; we have a list for names
@@ -453,6 +486,8 @@ Why is this change even neccessary?
      I suggest starting with a simpler program - let's call it simple-check - which does not check for
      arity correctness of applications or unbound variables.  When you understand how to do this, then
      extend your solution to reject programs which either
+
+     --> Note : Refer to the implemenetation below to see how simple-check has been implemented
 
        a. contain unbound symbols, or
        b. contain applications in which the number of arguments in some phrase (f x1 ... xn) does not
@@ -475,6 +510,7 @@ Why is this change even neccessary?
 ;
 ;
  4.   Add let to TLS, and prove that the resulting interpreter (for the language TLS-let, that is, TLS with let) is correct.  
+ --> to check for the add let to TLS, refer to the modification + comments that has been added to list-to-action.
 |#
 
 
@@ -502,3 +538,123 @@ When you evaluate a Scheme Expression using this interpreter, here's what happen
 5. Apply functions : If it's a function application, '*application' and 'myapply' handle applying the function to it's arguments.
 6. Return Result : The final result of the expression is returned.
 |#
+
+; Implementation of simple-check
+(define (simple-check expr)
+  (cond
+    ((number? expr) #t)
+    ((boolean? expr) #t)
+    ((symbol? expr) #t)
+    ((pair? expr)
+     (case (car expr)
+       ((quote) (and (pair? (cdr expr)) (null? (cddr expr))))
+       ((lambda) (and (pair? (cdr expr))
+                      (pair? (cadr expr))
+                      (every symbol? (cadr expr))
+                      (simple-check (caddr expr))))
+       ((cond) (every (lambda (clause)
+                        (and (pair? clause)
+                             (simple-check (car clause))
+                             (simple-check (cadr clause))))
+                      (cdr expr)))
+       (else (every simple-check (cdr expr)))))
+    (else #f)))
+
+
+; extended syntax checker (check)
+(define (check expr env)
+  (cond
+    ((number? expr) #t)
+    ((boolean? expr) #t)
+    ((symbol? expr) (bound? expr env))
+    ((pair? expr)
+     (case (car expr)
+       ((quote) (and (pair? (cdr expr)) (null? (cddr expr))))
+       ((lambda) (let ((params (cadr expr))
+                       (body (caddr expr)))
+                   (and (every symbol? params)
+                        (check body (append params env)))))
+       ((cond) (every (lambda (clause)
+                        (and (pair? clause)
+                             (check (car clause) env)
+                             (check (cadr clause) env)))
+                      (cdr expr)))
+       (else (let ((fn (car expr))
+                   (args (cdr expr)))
+               (and (check fn env)
+                    (every (lambda (arg) (check arg env)) args)
+                    (let ((arity (get-arity fn env)))
+                      (eq? (length args) arity))))))
+    (else #f))))
+
+(define (bound? sys env)
+  (member sys env))
+
+(define (get-arity fn env)
+  (cond 
+    ((eq? fn 'cons) 2)
+    ((eq? fn 'car) 1)
+    ((eq? fn 'cdr) 1)
+    ((eq? fn 'null?) 1)
+    ((eq? fn 'eq?) 2)
+    ((eq? fn 'atom) 1)
+    ((eq? fn 'zero?) 1)
+    ((eq? fn 'add1) 1)
+    ((eq? fn 'mul) 2)
+    ((eq? fn 'sub1) 1)
+    ((eq? fn 'number?) 1)
+    ; this conditional statement is added to handle the primitive square that was added
+    ((eq? fn 'square) 1)
+    (else #f)))
+
+
+; Explanation : simple-check function is used to validate basic syntax rule
+; Extended-check : adds environment handling to check for unbound symbols and arity correctness.
+; correctness : uses inductive reasoning to ensure each type of expression is correctly validated.
+
+; implementation relevant to question 4
+; function definition for *let
+(define *let 
+  (lambda (e table) 
+    (let* 
+    ; we are using let* to define various let bindings
+    ((bindings (cadr e))
+    (vars (map car bindings))
+    (vals (map cadr bindings))
+    (body (caddr e))
+    (lambda-expr (cons (list (quote lambda) vars body) vals)))
+  (meaning lambda-expr table))))
+
+; Transformation : Converts 'let' expressions to equivalent lambda applications
+; Evaluation : Uses the existing interpreter infrastructure to handle the transformed expressions
+
+#|
+Correctness : 
+Using structurral induction, we can say the following:
+- Basis : Simple cases without 'let' are correctly handled.
+- Induction hyphothesis : Assume 'let' is correctly handled in sunexpressions
+- Indunction step : For each expression type (e.g. 'cond', lambda, quote), if let appears, it's transformed and evaluated correctly
+
+In regards to the project, quesiton 2's response is the same as question 3's response from hw11, so nothing else will most likely require modifications
+|#
+
+; modificaition for q3 of the project
+; modified form of list-to-action function 
+; The function definition for *let has already been defined and doesn't require any modifications
+
+; function definition for *let*
+(define *let*
+  (lambda (e table)
+    (let loop ((bindings (cadr e))
+               (table table))
+      (if (null? bindings)
+          (meaning (caddr e) table)
+          (let* ((binding (car bindings))
+                 (var (car binding))
+                 (val (meaning (cadr binding) table)))
+            (loop (cdr bindings) (extend-table (new-entry (list var) (list val)) table)))))))
+
+            ; refer to list-to-action to see the modification that has been made
+
+
+
