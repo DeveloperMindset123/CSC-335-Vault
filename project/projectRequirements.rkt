@@ -466,7 +466,7 @@ Ensuring that the modified environment subsystem still satisfies the specificati
 - Lookup : Correctly retrieves the value associated with a name.
 - Extend : Correctly adds new bindings without affecting existing functionality.
 
-End of correctness proof here
+End of correctness proof here. beggining
 
 --> prior to the change in the representaiton of bindings is:
 (define names (quote (a b c))) ; we have a list for names
