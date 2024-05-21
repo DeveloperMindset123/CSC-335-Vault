@@ -54,7 +54,7 @@ Functions such as lookup-in-table, extend-table, lookup-in-entry, new-entry and 
                                                 (cdr table)
                                                 table-f)))))))
 
-; Function already works as intended, test it out on the terminal
+;TODO: this function needs to be defined, refer to the tls to see how the function was implemented.
 (define extend-table cons)
 
 

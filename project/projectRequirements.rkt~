@@ -51,7 +51,6 @@ build, first, second and third and atom are basic utility functions to manipulat
 ; as the name suggest, used to retrieve the third element within the list
 (define third caddr)
 
-; atom is anything that's not a pair and not a null value
 (define atom?
   (lambda (x)
     (and (not (pair? x)) (not (null? x)))))
@@ -115,7 +114,7 @@ Reason why extend-table remains unchanged --> it's purpose and functionality alr
     ; first commandment, check for empty or 0 values --> in this case, we are checking if name happens to be a empty list or not --> this will be the termination case of the recursion as names is being reduced each time.
     ; Following 2 lines of code shows the modification that has been made to the code
     ((null? entries) (entry-f name))
-    ((eq? ((caar entries) name)(cdar entries)))
+    ((eq? ((caar entries) name)(cdar entries))
 
 
     ; we are no longer checking the names list, since names is no longer a parameter being used
@@ -128,7 +127,7 @@ Reason why extend-table remains unchanged --> it's purpose and functionality alr
       ; replaced name with entries for the cdr primitive 
                                   (cdr entries)
                                   ;(cdr vals) --> cannot be used since vals is no longer a parameter value
-                                  entry-f)))))
+                                  entry-f))))))
 
 
 
@@ -585,8 +584,8 @@ When you evaluate a Scheme Expression using this interpreter, here's what happen
                (and (check fn env)
                     (every (lambda (arg) (check arg env)) args)
                     (let ((arity (get-arity fn env)))
-                      (eq? (length args) arity)))))))
-    (else #f)))
+                      (eq? (length args) arity))))))
+    (else #f))))
 
 (define (bound? sys env)
   (member sys env))
