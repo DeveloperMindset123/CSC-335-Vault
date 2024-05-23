@@ -1,0 +1,63 @@
+;; Problem    Specify, design, develop, code and prove correct an R5RS Scheme program remove-digit-left which
+;;            inputs an integer n and a digit d and which returns the number obtained from n by removing the
+;;            leftmost occurrence of d.
+
+
+;; Recursive
+
+;; assumes n <> d and that d is not leftmost in n
+
+
+
+(define (remove-digit-left n d)
+  (cond ((< n 10) n)
+        ((= (modulo n 10) d) (if (occurs? (quotient n 10) d)
+                                 (+ d (* 10 (remove-digit-left (quotient n 10) d)))
+                                 (quotient n 10)))
+        (else (+ (modulo n 10)
+                 (* 10 (remove-digit-left (quotient n 10) d))))))
+
+
+(define (occurs? n d)
+  (cond  ((< n 10) (= n d))
+         ((= (modulo n 10) d) #t)
+         (else (occurs? (quotient n 10) d))))
+
+
+
+
+;; Iterative
+
+;;;; assumes n <> d
+
+
+(define (rld n d)
+  (cond ((< n 10) n)
+        (else (iter n 0 0 d))))
+
+
+
+(define (iter nyp rsf num-digits-added-to-rsf d)
+  (cond ((zero? nyp) rsf)
+        ((= d (modulo nyp 10)) (if (occurs? (quotient nyp 10) d)
+                                   (iter (quotient nyp 10)
+                                         (+ (* (expt 10 num-digits-added-to-rsf) (modulo nyp 10)) rsf)
+                                         (+ 1 num-digits-added-to-rsf)
+                                         d)
+                                   (+ (* (expt 10 num-digits-added-to-rsf) (quotient nyp 10)) rsf)))
+        (else (if (occurs? (quotient nyp 10) d)
+                  (iter (quotient nyp 10)
+                        (+ (* (expt 10 num-digits-added-to-rsf) (modulo nyp 10)) rsf)
+                        (+ 1 num-digits-added-to-rsf)
+                        d)
+                  (+ (* (expt 10 num-digits-added-to-rsf)  nyp ) rsf)
+              ))))
+                   
+
+        
+ ;; another approach would be to start by reversing the digits of the number. 
+
+
+
+         
+  
